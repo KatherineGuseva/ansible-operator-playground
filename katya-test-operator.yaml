@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: katya-test-operator
+  labels:
+    name: katya-test-operator
+spec:
+  containers:
+  - name: katya-test-operator
+    image: katya-operator:latest
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    ports:
+      - containerPort: 8080
+

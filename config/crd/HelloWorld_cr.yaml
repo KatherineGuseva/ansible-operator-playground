@@ -1,0 +1,6 @@
+apiVersion: katya.example.com/v1alpha1
+kind: HelloWorld
+metadata:
+  name: helloworld
+spec:
+  foo: bar

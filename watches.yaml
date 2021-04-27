@@ -1,0 +1,9 @@
+---
+# Use the 'create api' subcommand to add watches to this file.
+#+kubebuilder:scaffold:watch
+- version: v1alpha1
+  group: katya.example.com
+  kind: HelloWorld
+  playbook: playbooks/HelloWorld.yaml
+
+#  playbook: playbooks/HelloWorld.yaml

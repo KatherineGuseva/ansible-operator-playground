@@ -1,0 +1,10 @@
+name: "{{ meta.name | default('helloworld') }}"
+namespace: "{{ meta.namespace | default('katya-test') }}"
+image: docker.io/ansibleplaybookbundle/hello-world:latest
+message: Hello, World!
+# To uninstall from the cluster
+# state: absent
+state: present
+
+# The size of the hello-world deployment
+size: 1

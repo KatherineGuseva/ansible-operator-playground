@@ -1,0 +1,50 @@
+dist: xenial
+sudo: required
+os: linux
+
+services:
+  - docker
+
+language: python
+python:
+  - "3.8"
+
+git:
+  depth: false
+
+env:
+  global:
+    - IMG: katya-test-operator:${TRAVIS_TAG:-${TRAVIS_COMMIT:0:7}}
+
+script: true
+
+stages:
+  - name: test
+
+jobs:
+  include:
+    - stage: test
+      env:
+        - JOB="trivy image vulnerability scan"
+      install:
+        - curl -fsSLo trivy.deb https://github.com/aquasecurity/trivy/releases/download/v0.16.0/trivy_0.16.0_Linux-64bit.deb
+        - sudo dpkg -i trivy.deb
+      script:
+        - make docker-build
+        # See https://github.com/operator-framework/operator-sdk/issues/4755
+        - trivy image --no-progress --exit-code 1 --severity CRITICAL --ignore-unfixed "${IMG}"
+
+    - stage: test
+      env:
+        - JOB="molecule integration tests"
+      before_install:
+        - pip install --upgrade pip
+        - pip install pipenv
+      install:
+        - curl -sSfLo /home/travis/bin/kind https://github.com/kubernetes-sigs/kind/releases/download/v0.10.0/kind-linux-amd64 && chmod +x /home/travis/bin/kind
+        - make kustomize ansible-operator
+        - pipenv install --dev
+        - source $(pipenv --venv)/bin/activate
+        - ansible-galaxy collection install -r requirements.yml
+      script:
+        - PATH="$(pwd)/bin:$PATH" molecule test -s kind
